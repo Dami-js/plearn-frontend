@@ -2,14 +2,16 @@ import {
   createMuiTheme,
   CssBaseline,
   responsiveFontSizes,
-  ThemeProvider
+  ThemeProvider,
 } from "@material-ui/core";
+import Navbar from "components/Navbar";
+import App, { AppProps, AppContext } from "next/app";
 import { useEffect } from "react";
 
 let theme = createMuiTheme();
 theme = responsiveFontSizes(theme);
 
-function MyApp({ Component, pageProps }) {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles: any = document.querySelector("#jss-server-side");
@@ -17,14 +19,21 @@ function MyApp({ Component, pageProps }) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
+  console.log(pageProps);
   return (
     <>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        {pageProps.header && <Navbar />}
         <Component {...pageProps} />
       </ThemeProvider>
     </>
   );
-}
+};
+
+MyApp.getInitailProps = async (appContext: AppContext) => {
+  const appProps = await App.getInitialProps(appContext);
+  return { ...appProps };
+};
 
 export default MyApp;

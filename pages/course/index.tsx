@@ -19,7 +19,7 @@ import { ReactNode } from "react";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     main: {
-      paddingTop: theme.spacing(7),
+      paddingTop: theme.spacing(10),
     },
     homeText: {
       textTransform: "capitalize",
@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Featured = () => {
   let arr: Array<number> = [];
-  for (let i: number = 0; i <= 8; i++) {
+  for (let i: number = 0; i <= 7; i++) {
     arr.push(i);
   }
   return (
@@ -100,25 +100,27 @@ const Home: NextPage<any> = ({ ...props }) => {
       {/* <Navbar /> */}
       <Box className={classes.main}>
         <Container>
-          <Box className={classes.hero}>
-            <Paper className={classes.heroInfo}>
-              <Box>
-                <Typography className={classes.introTitle}>
-                  Lorem Ipsum
-                </Typography>
-                <Typography className={classes.introText}>
-                  tenim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut
-                </Typography>
-              </Box>
-              <Box>
-                <SearchBar />
-              </Box>
-            </Paper>
-          </Box>
-          <Box>
+          <Box mb={4}>
             <Box mb={2}>
-              <Typography variant="h4">New Courses</Typography>
+              <Typography variant="h4">Pragmatist</Typography>
+            </Box>
+            <Featured />
+          </Box>
+          <Box mb={4}>
+            <Box mb={2}>
+              <Typography variant="h4">Theorist</Typography>
+            </Box>
+            <Featured />
+          </Box>
+          <Box mb={4}>
+            <Box mb={2}>
+              <Typography variant="h4">Reflctor</Typography>
+            </Box>
+            <Featured />
+          </Box>
+          <Box mb={4}>
+            <Box mb={2}>
+              <Typography variant="h4">Activist</Typography>
             </Box>
             <Featured />
           </Box>
