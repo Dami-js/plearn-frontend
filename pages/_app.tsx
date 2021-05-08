@@ -19,7 +19,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
-  console.log(pageProps);
   return (
     <>
       <ThemeProvider theme={theme}>
