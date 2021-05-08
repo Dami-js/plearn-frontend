@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Questionnaire: NextPage = () => {
+const Questionnaire = () => {
   const classes = useStyles();
   return (
     <Box className={classes.root}>

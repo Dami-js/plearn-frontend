@@ -14,16 +14,71 @@ import {
   Theme,
   Typography,
 } from "@material-ui/core";
-import { GetStaticPaths, NextPage, NextPageContext } from "next";
-import { NextRouter, useRouter } from "next/dist/client/router";
-import withRouter from "next/dist/client/with-router";
+import { GetStaticPaths, NextPageContext } from "next";
+import { useRouter } from "next/dist/client/router";
 import Link from "next/link";
-import { Component } from "react";
-import useCourseStyles from "../useStyles";
 import * as _ from "lodash";
 import Tag from "components/Tag";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import GetAppIcon from "@material-ui/icons/GetApp";
+
+const white = "#ffffff";
+
+export const useCourseStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      paddingTop: theme.spacing(7),
+      [theme.breakpoints.between("sm", "md")]: {
+        paddingTop: theme.spacing(8),
+      },
+      [theme.breakpoints.up("lg")]: {
+        paddingTop: theme.spacing(8),
+      },
+    },
+    topHeaderSection: {
+      backgroundColor: theme.palette.primary.main,
+      paddingBlock: theme.spacing(3),
+    },
+    breadcrumbItem: {
+      color: white,
+      fontSize: theme.spacing(2.3),
+    },
+    courseTitle: {
+      fontSize: theme.spacing(3.2),
+      [theme.breakpoints.up("sm")]: {
+        fontSize: theme.spacing(3.5),
+      },
+      fontWeight: "bold",
+      lineHeight: 2,
+    },
+    courseDesc: {
+      fontSize: theme.spacing(2.2),
+    },
+    fontBold: {
+      fontWeight: "bold",
+    },
+    wylCont: {},
+    sectionTitle: {
+      fontSize: theme.spacing(2.8),
+      fontWeight: "bold",
+      lineHeight: 2,
+    },
+    sectionContent: {
+      color: theme.palette.grey[700],
+    },
+    matCont: {
+      padding: 18,
+      textAlign: "center",
+      "& p": {
+        fontSize: theme.spacing(1.7),
+        color: theme.palette.grey[700],
+        marginBottom: 7,
+      },
+    },
+    requirementCont: {},
+    descriptionCont: {},
+  })
+);
 
 function Course() {
   const classes = useCourseStyles();
