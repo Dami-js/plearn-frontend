@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Container,
   createStyles,
   Grid,
@@ -14,6 +15,7 @@ import SearchBar from "components/SearchBar";
 import { NextPage, NextPageContext } from "next";
 import { AppContext } from "next/app";
 import Head from "next/head";
+import Link from "next/link";
 import { ReactNode } from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -63,16 +65,17 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     introTitle: {
       fontWeight: "bold",
-      fontSize: theme.spacing(3),
+      fontSize: theme.spacing(2),
       color: "#000",
       marginBottom: theme.spacing(1),
       [theme.breakpoints.up("md")]: {
-        fontSize: theme.spacing(5),
+        fontSize: theme.spacing(3),
       },
     },
     introText: {
       fontSize: theme.spacing(2),
       marginBottom: theme.spacing(1),
+      fontWeight: 400,
     },
   })
 );
@@ -104,21 +107,35 @@ const Home: NextPage<any> = ({ ...props }) => {
             <Paper className={classes.heroInfo}>
               <Box>
                 <Typography className={classes.introTitle}>
-                  Lorem Ipsum
+                  Welcome to your personal e-learning system
                 </Typography>
                 <Typography className={classes.introText}>
-                  tenim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut
+                  The flexibility of learning is our top priority, and that is
+                  why we built{" "}
+                  <strong>
+                    <em>Plearn</em>
+                  </strong>{" "}
+                  just for you. To begin this journey, click the button below
                 </Typography>
               </Box>
               <Box>
-                <SearchBar />
+                <Link href="/questionnaire">
+                  <Button variant="contained" color="primary" size="large">
+                    Get Started
+                  </Button>
+                </Link>
               </Box>
             </Paper>
           </Box>
           <Box>
             <Box mb={2}>
               <Typography variant="h4">New Courses</Typography>
+            </Box>
+            <Featured />
+          </Box>
+          <Box mt={10}>
+            <Box mb={2}>
+              <Typography variant="h4">Popular Courses</Typography>
             </Box>
             <Featured />
           </Box>

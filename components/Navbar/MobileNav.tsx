@@ -16,6 +16,7 @@ import Spacer from "components/Spacer";
 import Link from "next/link";
 import CategoriesDropdown from "components/CategoriesDropdown";
 import UserAccountDropdown from "components/UserAccountDropdown";
+import Logo from "components/Logo";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,25 +47,26 @@ const MobileNav = () => {
   };
   return (
     <Box className={classes.mobileNavContent}>
-      <Box py={3}>
-        <Typography variant="h4">Logo</Typography>
+      <Box mb={3} display="flex" alignItems="center" width="100%">
+        <Logo />
+        <Box ml="auto">
+          <UserAccountDropdown />
+        </Box>
       </Box>
-      <CategoriesDropdown />
-      <UserAccountDropdown />
-
-      <Spacer size={1} />
       <Box width="100%" mb={2}>
         <SearchBar />
       </Box>
-      <Box display="flex">
-        <Box mr={3}>
-          <Link href="/login">
-            <Button variant="outlined" color="primary" size="large">
-              Login
-            </Button>
-          </Link>
-        </Box>
-        <Button variant="contained" color="primary" size="large">
+      <CategoriesDropdown />
+
+      <Spacer size={1} />
+      <Box display="grid" gridGap={10} flexDirection="column" width="100%">
+        <Link href="/login">
+          <Button variant="outlined" color="primary" size="large" fullWidth>
+            Login
+          </Button>
+        </Link>
+
+        <Button variant="contained" color="primary" size="large" fullWidth>
           Sign Up
         </Button>
       </Box>

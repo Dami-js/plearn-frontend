@@ -7,6 +7,7 @@ import {
 import Navbar from "components/Navbar";
 import App, { AppProps, AppContext } from "next/app";
 import { useEffect } from "react";
+import "./app.css";
 
 let theme = createMuiTheme();
 theme = responsiveFontSizes(theme);

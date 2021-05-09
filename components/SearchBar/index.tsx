@@ -20,15 +20,17 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
       paddingLeft: 15,
       borderRadius: "25px",
-      [theme.breakpoints.up("md")]: {
-        height: "40px",
-      },
+      height: "35px",
+      // [theme.breakpoints.up("md")]: {
+      // },
     },
     input: {
       flex: 1,
+      fontSize: theme.spacing(1.8),
     },
     iconButton: {
-      padding: 10,
+      paddingBlock: 5,
+      paddingInline: 10,
     },
     searchBarWrapper: {
       position: "relative",
@@ -37,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
     searchDrawerCont: {
       position: "absolute",
       width: "100%",
-      top: 60,
+      top: 40,
       [theme.breakpoints.up("md")]: {
         top: 45,
       },
@@ -97,8 +99,8 @@ const SearchBar = () => {
           onChange={(e) => handleSearch(e)}
           onFocus={handleOnFocus}
         />
-        <IconButton type="submit">
-          <SearchIcon />
+        <IconButton className={classes.iconButton} type="submit">
+          <SearchIcon fontSize="small" />
         </IconButton>
       </Paper>
       {showDrawer && (

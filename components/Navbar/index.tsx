@@ -11,6 +11,7 @@ import {
   Box,
   MenuItem,
   SwipeableDrawer,
+  useTheme,
 } from "@material-ui/core";
 import Dropdown from "components/Dropdown";
 import SearchBar from "components/SearchBar";
@@ -67,6 +68,7 @@ const Navbar = () => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+  const theme = useTheme();
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -95,7 +97,7 @@ const Navbar = () => {
             <MobileNav />
           </SwipeableDrawer>
           <Box className={classes.navMenuItems}>
-            <Box width="500px" ml={5} mr={5}>
+            <Box width={theme.spacing(45)} mx={3}>
               <SearchBar />
             </Box>
 
@@ -114,18 +116,27 @@ const Navbar = () => {
               <MenuItem>Theorist</MenuItem>
               <MenuItem>Reflector</MenuItem>
             </Dropdown>
-            <Box ml="auto">
+            <Box ml={2}>
+              <Link href="/questionnaire">
+                <Button variant="text" color="primary" size="small">
+                  Take Test
+                </Button>
+              </Link>
+            </Box>
+            <Box ml="auto" display="flex" alignItems="center">
               <UserAccountDropdown />
-              <Link href="/login">
-                <Box mx={3} clone>
+              <Box mx={3}>
+                <Link href="/login">
                   <Button variant="outlined" color="primary" size="small">
                     Login
                   </Button>
-                </Box>
+                </Link>
+              </Box>
+              <Link href="/register">
+                <Button variant="contained" color="primary" size="small">
+                  Sign Up
+                </Button>
               </Link>
-              <Button variant="contained" color="primary" size="small">
-                Sign Up
-              </Button>
             </Box>
           </Box>
         </Toolbar>
