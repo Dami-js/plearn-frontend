@@ -21,6 +21,7 @@ import MobileNav from "./MobileNav";
 import Link from "next/link";
 import UserAccountDropdown from "components/UserAccountDropdown";
 import Logo from "components/Logo";
+import { useSession } from "next-auth/client";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -69,6 +70,7 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const theme = useTheme();
+  const [session] = useSession();
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -79,7 +81,7 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="fixed" className={classes.root} elevation={4}>
+    <AppBar position="fixed" className={classes.root} elevation={0}>
       <Container>
         <Toolbar disableGutters>
           <Logo />
@@ -124,19 +126,23 @@ const Navbar = () => {
               </Link>
             </Box>
             <Box ml="auto" display="flex" alignItems="center">
-              <UserAccountDropdown />
-              <Box mx={3}>
-                <Link href="/login">
-                  <Button variant="outlined" color="primary" size="small">
-                    Login
-                  </Button>
-                </Link>
-              </Box>
-              <Link href="/register">
-                <Button variant="contained" color="primary" size="small">
-                  Sign Up
-                </Button>
-              </Link>
+              {session && <UserAccountDropdown />}
+              {!session && (
+                <>
+                  <Box mx={3}>
+                    <Link href="/login">
+                      <Button variant="outlined" color="primary" size="small">
+                        Login
+                      </Button>
+                    </Link>
+                  </Box>
+                  <Link href="/register">
+                    <Button variant="contained" color="primary" size="small">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </Box>
           </Box>
         </Toolbar>

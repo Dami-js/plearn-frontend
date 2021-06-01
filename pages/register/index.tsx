@@ -12,10 +12,9 @@ import {
   useTheme,
   Grid,
 } from "@material-ui/core";
-import LecturerRegistration from "components/RegistrationForms/LecturerRegistration";
-import StudentRegistration from "components/RegistrationForms/StudentRegistration";
 import { ChangeEvent, useState } from "react";
 import Link from "next/link";
+import RegistrationForm from "components/RegistrationForm";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -106,10 +105,10 @@ const Login = () => {
               </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-              <LecturerRegistration />
+              <RegistrationForm />
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <StudentRegistration />
+              <RegistrationForm isStudent />
             </TabPanel>
           </div>
         </Grid>

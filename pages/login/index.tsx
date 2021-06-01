@@ -5,6 +5,7 @@ import {
   createStyles,
   Grid,
   makeStyles,
+  Snackbar,
   Tab,
   Tabs,
   TextField,
@@ -12,10 +13,12 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import LecturerLogin from "components/LoginForms/LecturerLogin";
-import StudentLogin from "components/LoginForms/StudentLogin";
 import { ChangeEvent, useState } from "react";
 import Link from "next/link";
+import { createPost, fetchTodos } from "pages/api/queries";
+import { useRouter } from "next/router";
+import Alert from "components/Alert";
+import LoginForm from "components/LoginForms";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -81,8 +84,21 @@ const Login = () => {
     setValue(newValue);
   };
 
+  const [open, setOpen] = useState(true);
+  const { query } = useRouter();
+
   return (
     <div className={classes.root}>
+      {query.error && query.error == "CredentialsSignin" && (
+        <Alert severity="error" open={open} onClose={() => setOpen(false)}>
+          Incorrect login details
+        </Alert>
+      )}
+      {query.reg && query.reg == "success" && (
+        <Alert open={open} onClose={() => setOpen(false)}>
+          Registration successful! Please login.
+        </Alert>
+      )}
       <Box mb={3}>
         <Typography variant="h4">Login</Typography>
       </Box>
@@ -106,10 +122,10 @@ const Login = () => {
               </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-              <LecturerLogin />
+              <LoginForm />
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <StudentLogin />
+              <LoginForm isStudent />
             </TabPanel>
           </div>
         </Grid>

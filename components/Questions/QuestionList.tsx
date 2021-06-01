@@ -1,16 +1,33 @@
 import { Box, Button, Typography } from "@material-ui/core";
 import { SignalCellularConnectedNoInternet4BarSharp } from "@material-ui/icons";
-import { useEffect } from "react";
+import Alert from "components/Alert";
+import MuiModal from "components/MuiModal";
+import { getSession, useSession } from "next-auth/client";
+import { determineLearningStyle } from "pages/api/queries";
+import { useEffect, useState } from "react";
+import { useMutation } from "react-query";
 import QuestionProvider, { useQuestionContext } from "./context";
 import StepFour from "./StepFour";
 import StepOne from "./StepOne";
 import StepThree from "./StepThree";
 import StepTwo from "./StepTwo";
+import * as _ from "lodash";
+import { useRouter } from "next/router";
 
 type NavKey = "next" | "prev";
 
-const QuestionList = () => {
+const QuestionList = ({ session }) => {
   const { answers, step, setStep } = useQuestionContext();
+  const [open, setOpen] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const router = useRouter();
+
+  const { mutate, data, isLoading, error } = useMutation(
+    determineLearningStyle,
+    {
+      mutationKey: "questionnaire",
+    }
+  );
 
   const handleNext = () => {
     setStep(step + 1);
@@ -30,9 +47,23 @@ const QuestionList = () => {
         break;
 
       default:
-        console.log(answers);
+        mutate(
+          { token: session.user.access_token, answers },
+          {
+            onError: (error, variables, ctx) => {
+              setOpenAlert(true);
+            },
+            onSuccess: (data, variables, ctx) => {
+              setOpen(true);
+            },
+          }
+        );
         break;
     }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -42,6 +73,46 @@ const QuestionList = () => {
 
   return (
     <>
+      <Alert
+        severity="error"
+        open={openAlert}
+        onClose={() => setOpenAlert(false)}
+      >
+        An error occurred
+      </Alert>
+      <MuiModal open={open} title="Congratulations!" handleClose={handleClose}>
+        <Box textAlign="center" p={5}>
+          <Typography variant="h5">
+            Thank you for your sincere answers. We are glad to inform you that
+            your preferred learning style is
+          </Typography>
+        </Box>
+        <Box textAlign="center" fontWeight="bold">
+          {data?.learningStyle &&
+            data.learningStyle.map((item, idx) => (
+              <Typography
+                variant="h4"
+                key={idx}
+                style={{ transform: "capitalize" }}
+              >
+                {" "}
+                {_.capitalize(item)}{" "}
+              </Typography>
+            ))}
+        </Box>
+        <Box textAlign="center" py={5}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={() => {
+              router.push("/");
+            }}
+          >
+            Continue
+          </Button>
+        </Box>
+      </MuiModal>
       <Box textAlign="center" fontWeight="bold" py={4} id="#top">
         <Typography variant="h4">{step}/4</Typography>
       </Box>
@@ -82,8 +153,9 @@ const QuestionList = () => {
             color="primary"
             size="large"
             onClick={() => handleNavigation()}
+            disabled={isLoading}
           >
-            Submit
+            {isLoading ? "Loading..." : "Submit"}
           </Button>
         )}
       </Box>

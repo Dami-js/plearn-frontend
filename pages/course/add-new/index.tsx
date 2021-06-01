@@ -18,6 +18,7 @@ import {
 import { NextPageContext } from "next";
 import { useEffect, useState } from "react";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import { getSession } from "next-auth/client";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -153,9 +154,21 @@ const AddNewCourse = () => {
   );
 };
 
-AddNewCourse.getInitialProps = async (context: NextPageContext) => {
+export async function getServerSideProps(context) {
+  const session: any = await getSession(context);
+
   const props = { header: true, footer: true };
-  return { ...props };
-};
+  if (!session) {
+    context.res.writeHead(302, { Location: "/login" });
+    context.res.end();
+    return { props: {} };
+  }
+  if (session && session.user.isStudent) {
+    context.res.writeHead(302, { Location: "/" });
+    context.res.end();
+    return { props: { ...props } };
+  }
+  return { props: { ...props } };
+}
 
 export default AddNewCourse;

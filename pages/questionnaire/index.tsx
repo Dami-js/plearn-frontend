@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import Questions from "components/Questions";
 import { NextPage, NextPageContext } from "next";
+import { getSession } from "next-auth/client";
 import { Fragment } from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -50,9 +51,22 @@ const Questionnaire = () => {
   );
 };
 
-Questionnaire.getInitialProps = (ctx: NextPageContext) => {
+export async function getServerSideProps(context) {
+  const session: any = await getSession(context);
+
   const props = { header: true, footer: true };
-  return { ...props };
-};
+
+  if (!session) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+      props: {},
+    };
+  }
+
+  return { props: { ...props } };
+}
 
 export default Questionnaire;

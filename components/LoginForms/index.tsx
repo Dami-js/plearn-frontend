@@ -10,6 +10,7 @@ import { signIn } from "next-auth/client";
 import { FormikProps, useFormik } from "formik";
 import * as yup from "yup";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { NEXTAUTH_URL, NEXT_PUBLIC_URL } from "utils/constants";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,10 +27,17 @@ export interface LoginFormValues {
   password: string;
 }
 
-interface StudentLoginProps {}
+interface LoginFormProps {
+  isStudent?: boolean;
+}
 
-const validationSchema = yup.object({
-  username: yup.string().required("Username is required"),
+const studentValidationSchema = yup.object({
+  username: yup.string().required("Student number is required"),
+  password: yup.string().required("Password is required"),
+});
+
+const tutorValidationSchema = yup.object({
+  username: yup.string().required("Email is required"),
   password: yup.string().required("Password is required"),
 });
 
@@ -38,35 +46,52 @@ const initialValues: LoginFormValues = {
   password: "",
 };
 
-const StudentLogin = () => {
+const LoginForm = ({ isStudent = false }: LoginFormProps) => {
   const classes = useStyles();
 
   const onSubmit = (values: LoginFormValues) => {
     signIn("credentials", {
       ...values,
-      callbackUrl: `http://localhost:3000`,
+      callbackUrl: `${NEXT_PUBLIC_URL}`,
     });
     console.log(values);
   };
   const { handleSubmit, handleChange, touched, errors, values, isSubmitting } =
     useFormik({
-      validationSchema,
+      validationSchema: isStudent
+        ? studentValidationSchema
+        : tutorValidationSchema,
       initialValues,
       onSubmit,
     });
 
   return (
     <form onSubmit={handleSubmit}>
-      <TextField
-        className={classes.input}
-        label="Student number"
-        variant="outlined"
-        name="username"
-        onChange={handleChange}
-        value={values.username}
-        error={touched.username && Boolean(errors.username)}
-        helperText={touched.username && errors.username}
-      />
+      {isStudent && (
+        <TextField
+          className={classes.input}
+          label="Student number"
+          variant="outlined"
+          name="username"
+          onChange={handleChange}
+          value={values.username}
+          error={touched.username && Boolean(errors.username)}
+          helperText={touched.username && errors.username}
+        />
+      )}
+      {!isStudent && (
+        <TextField
+          className={classes.input}
+          label="Email Address"
+          variant="outlined"
+          type="email"
+          name="username"
+          onChange={handleChange}
+          value={values.username}
+          error={touched.username && Boolean(errors.username)}
+          helperText={touched.username && errors.username}
+        />
+      )}
       <TextField
         className={classes.input}
         label="Password"
@@ -96,4 +121,4 @@ const StudentLogin = () => {
   );
 };
 
-export default StudentLogin;
+export default LoginForm;

@@ -9,10 +9,12 @@ import {
   Theme,
   Typography,
 } from "@material-ui/core";
+import AuthGuard from "components/AuthGuard";
 import Feed from "components/Feed";
 import Navbar from "components/Navbar";
 import SearchBar from "components/SearchBar";
 import { NextPage, NextPageContext } from "next";
+import { getSession, useSession } from "next-auth/client";
 import { AppContext } from "next/app";
 import Head from "next/head";
 import Link from "next/link";
@@ -66,7 +68,6 @@ const useStyles = makeStyles((theme: Theme) =>
     introTitle: {
       fontWeight: "bold",
       fontSize: theme.spacing(2),
-      color: "#000",
       marginBottom: theme.spacing(1),
       [theme.breakpoints.up("md")]: {
         fontSize: theme.spacing(3),
@@ -98,6 +99,9 @@ const Featured = () => {
 
 const Home: NextPage<any> = ({ ...props }) => {
   const classes = useStyles();
+  const [session] = useSession();
+  console.log(session);
+
   return (
     <div>
       {/* <Navbar /> */}
@@ -145,9 +149,22 @@ const Home: NextPage<any> = ({ ...props }) => {
   );
 };
 
-Home.getInitialProps = async (context: NextPageContext) => {
+export async function getServerSideProps(context) {
+  const session: any = await getSession(context);
+
   const props = { header: true, footer: true };
-  return { ...props };
-};
+
+  if (!session) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+      props: {},
+    };
+  }
+
+  return { props: { ...props } };
+}
 
 export default Home;

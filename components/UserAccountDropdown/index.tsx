@@ -5,12 +5,15 @@ import {
   makeStyles,
   MenuItem,
   Theme,
+  Typography,
+  useTheme,
 } from "@material-ui/core";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { MouseEvent, useState } from "react";
 import Dropdown from "components/Dropdown";
 import Link from "next/link";
+import { signOut } from "next-auth/client";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,6 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const UserAccountDropdown = () => {
+  const theme = useTheme();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -44,9 +48,22 @@ const UserAccountDropdown = () => {
         keepMounted
       >
         <Link href="/profile">
-          <MenuItem>My Account</MenuItem>
+          <MenuItem>
+            <Box
+              color={
+                theme.palette.type !== "dark" ? "default.main" : "default.dark"
+              }
+              clone
+            >
+              <Typography>My Account</Typography>
+            </Box>
+          </MenuItem>
         </Link>
-        <MenuItem>
+        <MenuItem
+          onClick={() =>
+            signOut({ callbackUrl: `http://localhost:3000/login` })
+          }
+        >
           <Box component="span" mr={1}>
             <ExitToAppIcon color="secondary" />
           </Box>

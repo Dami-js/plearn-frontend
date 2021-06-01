@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from "axios";
+
 export interface Feed {
   title: string;
   image: string;
@@ -34,4 +36,25 @@ export interface Course {
   objectives: Array<string>;
   requirements: Array<string>;
   files: any;
+}
+
+export interface ResponseError {
+  config: AxiosRequestConfig;
+  isAxiosError: boolean;
+  request: XMLHttpRequest;
+  response: {
+    config: AxiosRequestConfig;
+    data: {
+      error: string;
+      message: string;
+      statusCode: number;
+    };
+    headers: any;
+    request: XMLHttpRequest;
+    status: number;
+    statusText: string;
+  };
+  toJSON: Function;
+  message: string;
+  stack: string;
 }

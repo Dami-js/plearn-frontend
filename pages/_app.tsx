@@ -5,12 +5,14 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import Navbar from "components/Navbar";
+import { Provider } from "next-auth/client";
 import App, { AppProps, AppContext } from "next/app";
 import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import queryClient from "utils/queryClient";
+import { ReactQueryDevtools } from "react-query/devtools";
+import theme from "utils/theme";
 import "./app.css";
-
-let theme = createMuiTheme();
-theme = responsiveFontSizes(theme);
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
@@ -24,8 +26,13 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     <>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {pageProps.header && <Navbar />}
-        <Component {...pageProps} />
+        <QueryClientProvider client={queryClient}>
+          <Provider session={pageProps.session}>
+            {pageProps.header && <Navbar />}
+            <Component {...pageProps} />
+          </Provider>
+          <ReactQueryDevtools />
+        </QueryClientProvider>
       </ThemeProvider>
     </>
   );
