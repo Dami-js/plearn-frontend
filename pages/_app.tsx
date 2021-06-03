@@ -13,6 +13,7 @@ import queryClient from "utils/queryClient";
 import { ReactQueryDevtools } from "react-query/devtools";
 import theme from "utils/theme";
 import "./app.css";
+import LayoutProvider from "contexts/Layout";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
@@ -28,8 +29,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <CssBaseline />
         <QueryClientProvider client={queryClient}>
           <Provider session={pageProps.session}>
-            {pageProps.header && <Navbar />}
-            <Component {...pageProps} />
+            <LayoutProvider useLayout={pageProps.useLayout}>
+              <Component {...pageProps} />
+            </LayoutProvider>
           </Provider>
           <ReactQueryDevtools />
         </QueryClientProvider>

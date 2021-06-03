@@ -15,6 +15,8 @@ import {
 import { ChangeEvent, useState } from "react";
 import Link from "next/link";
 import RegistrationForm from "components/RegistrationForm";
+import { getSession } from "next-auth/client";
+import { redirect } from "utils/functions";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,7 +73,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const Login = () => {
+const Register = () => {
   const classes = useStyles();
   const [value, setValue] = useState(0);
   const theme = useTheme();
@@ -117,4 +119,15 @@ const Login = () => {
   );
 };
 
-export default Login;
+export async function getServerSideProps(context) {
+  const session: any = await getSession(context);
+
+  const props = { useLayout: false, session };
+  if (session) {
+    return redirect("/");
+  }
+
+  return { props: { ...props } };
+}
+
+export default Register;

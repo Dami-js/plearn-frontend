@@ -65,12 +65,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Navbar = () => {
+const Navbar = ({ session }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const theme = useTheme();
-  const [session] = useSession();
+  // const [session] = useSession();
+  console.log(session);
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -119,6 +120,20 @@ const Navbar = () => {
               <MenuItem>Reflector</MenuItem>
             </Dropdown>
             <Box ml={2}>
+              <Link href="/courses">
+                <Button variant="text" color="default" size="small">
+                  Courses
+                </Button>
+              </Link>
+            </Box>
+            <Box ml={2}>
+              <Link href="/#!">
+                <Button variant="text" color="default" size="small">
+                  My Learning Style
+                </Button>
+              </Link>
+            </Box>
+            <Box ml={2}>
               <Link href="/questionnaire">
                 <Button variant="text" color="primary" size="small">
                   Take Test
@@ -131,7 +146,7 @@ const Navbar = () => {
                 <>
                   <Box mx={3}>
                     <Link href="/login">
-                      <Button variant="outlined" color="primary" size="small">
+                      <Button variant="text" color="primary" size="small">
                         Login
                       </Button>
                     </Link>

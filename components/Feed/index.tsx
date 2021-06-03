@@ -10,7 +10,7 @@ const Feed = () => {
 
   return (
     <>
-      <Link href="/course/title-of-the-course">
+      <Link href="/courses/title-of-the-course">
         <Card className={classes.root} variant="outlined">
           <CardMedia
             className={classes.media}

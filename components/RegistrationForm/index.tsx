@@ -119,10 +119,7 @@ const RegistrationForm = ({ isStudent = false }: RegistrationFormForm) => {
         console.log(response);
       },
       onSuccess: (data, variables, context) => {
-        signin("credentials", {
-          ...loginValues,
-          callbackUrl: `${NEXT_PUBLIC_URL}/post-register`,
-        });
+        router.push("/login?reg=success");
       },
     });
   };

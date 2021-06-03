@@ -24,44 +24,6 @@ export interface User {
   coursesCreated?: Course[];
 }
 
-const users: Array<User> = [
-  {
-    id: 1,
-    firstname: "damilola",
-    lastname: "seweje",
-    email: "sewejed@gmail.com",
-    level: "100",
-    password: "12345",
-    isStudent: true,
-    learningStyle: "pragmatist",
-  },
-  {
-    id: 2,
-    firstname: "segun",
-    lastname: "kenssou",
-    email: "kenssou@gmail.com",
-    level: "100",
-    password: "12345",
-    isStudent: true,
-    learningStyle: null,
-  },
-  {
-    id: 3,
-    firstname: "yusuf",
-    lastname: "afolabi",
-    email: "aafo@gmail.com",
-    title: "dr",
-    password: "12345",
-    isStudent: false,
-    coursesCreated: [
-      {
-        id: 1,
-        title: "Partial diffrential equation",
-      },
-    ],
-  },
-];
-
 interface ICredentials {
   username: string;
   password: string;

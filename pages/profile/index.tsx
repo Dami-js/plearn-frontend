@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   createStyles,
   makeStyles,
@@ -17,6 +18,7 @@ import * as _ from "lodash";
 import { useQuery } from "react-query";
 import { myProfile } from "pages/api/queries";
 import { useEffect } from "react";
+import { Skeleton } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,17 +32,32 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     titleBar: {
-      backgroundColor: theme.palette.primary.main,
+      background:
+        "url(https://res.cloudinary.com/sewejed/image/upload/v1622724539/pexels-monstera-6281828_1_nu4ckc.png)",
       paddingBlock: theme.spacing(2),
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      height: "200px",
       marginBottom: theme.spacing(4),
       [theme.breakpoints.up("lg")]: {
+        height: "300px",
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        justifyContent: "center",
         marginBottom: theme.spacing(10),
       },
     },
     titleBarText: {
       color: grey[50],
-      fontSize: theme.spacing(2.6),
+      fontSize: theme.spacing(5),
       fontWeight: 700,
+    },
+    learningText: {
+      color: grey[50],
+      fontSize: theme.spacing(3),
+      fontWeight: 500,
+      textTransform: "capitalize",
     },
     detailTitle: {
       fontWeight: 700,
@@ -77,18 +94,42 @@ const Profile = ({ session }) => {
 
   const { data, error, isLoading, refetch } = useQuery(
     ["getProfile", { token: session?.user?.access_token }],
-    myProfile
+    myProfile,
+    { retry: false }
   );
 
   if (isLoading) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <div className={classes.root}>
+        <Box display="flex" alignItems="center" justifyContent="center">
+          <Container>
+            <Skeleton variant="rect" width="100%" height={80} />
+            <Box my={2}>
+              <Skeleton variant="rect" width="100%" height={400} />
+            </Box>
+            <Skeleton variant="rect" width="100%" height={300} />
+          </Container>
+        </Box>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <Button variant="contained" color="primary" onClick={() => refetch()}>
-        Refetch
-      </Button>
+      <div className={classes.root}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          my={2}
+          flexGrow="1"
+          height="90vh"
+        >
+          <Button variant="contained" color="primary" onClick={() => refetch()}>
+            Refresh
+          </Button>
+        </Box>
+      </div>
     );
   }
   return (
@@ -96,17 +137,22 @@ const Profile = ({ session }) => {
       <div className={classes.root}>
         <Box className={classes.titleBar}>
           <Container>
-            <Box display="flex" justifyContent="space-between">
+            <Box textAlign="center" color="#ffffff">
               <Typography className={classes.titleBarText}>
                 My profile
               </Typography>
-              <Box color="#ffffff">
-                <Button variant="contained" color="default">
-                  <CreateIcon fontSize="small" />{" "}
-                  <Box component="span" ml={1}>
-                    Edit
-                  </Box>
-                </Button>
+              {data.learningStyle.length > 0 && (
+                <Box>
+                  <Typography>You are a</Typography>
+                </Box>
+              )}
+              {data.learningStyle.length > 0 &&
+                data.learningStyle.map((item, idx) => (
+                  <Typography key={idx} className={classes.learningText}>
+                    {item}
+                  </Typography>
+                ))}
+              {/* <Box color="#ffffff">
                 {!data.isStudent && (
                   <Box component="span" ml={2}>
                     <Link href="/course/add-new">
@@ -116,7 +162,7 @@ const Profile = ({ session }) => {
                     </Link>
                   </Box>
                 )}
-              </Box>
+              </Box> */}
             </Box>
           </Container>
         </Box>

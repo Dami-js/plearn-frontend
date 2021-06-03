@@ -16,7 +16,7 @@ let theme = createMuiTheme({
   palette: {
     // type: "dark",
     primary: {
-      main: "#5c6ac4",
+      main: "#0056d2",
     },
     default: {
       main: grey[900],

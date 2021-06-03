@@ -11,6 +11,7 @@ import {
 } from "@material-ui/core";
 import AuthGuard from "components/AuthGuard";
 import Feed from "components/Feed";
+import Jumbotron from "components/Jumbotron";
 import Navbar from "components/Navbar";
 import SearchBar from "components/SearchBar";
 import { NextPage, NextPageContext } from "next";
@@ -100,14 +101,33 @@ const Featured = () => {
 const Home: NextPage<any> = ({ ...props }) => {
   const classes = useStyles();
   const [session] = useSession();
-  console.log(session);
 
   return (
     <div>
       {/* <Navbar /> */}
       <Box className={classes.main}>
+        <Jumbotron />
         <Container>
-          <Box className={classes.hero}>
+          <Box>
+            <Box mb={2}>
+              <Typography variant="h4">New Courses</Typography>
+            </Box>
+            <Featured />
+          </Box>
+          <Box mt={10}>
+            <Box mb={2}>
+              <Typography variant="h4">Popular Courses</Typography>
+            </Box>
+            <Featured />
+          </Box>
+        </Container>
+      </Box>
+    </div>
+  );
+};
+
+{
+  /* <Box className={classes.hero}>
             <Paper className={classes.heroInfo}>
               <Box>
                 <Typography className={classes.introTitle}>
@@ -130,41 +150,13 @@ const Home: NextPage<any> = ({ ...props }) => {
                 </Link>
               </Box>
             </Paper>
-          </Box>
-          <Box>
-            <Box mb={2}>
-              <Typography variant="h4">New Courses</Typography>
-            </Box>
-            <Featured />
-          </Box>
-          <Box mt={10}>
-            <Box mb={2}>
-              <Typography variant="h4">Popular Courses</Typography>
-            </Box>
-            <Featured />
-          </Box>
-        </Container>
-      </Box>
-    </div>
-  );
-};
+          </Box> */
+}
 
 export async function getServerSideProps(context) {
   const session: any = await getSession(context);
 
-  const props = { header: true, footer: true };
-
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-      props: {},
-    };
-  }
-
-  return { props: { ...props } };
+  return { props: { session } };
 }
 
 export default Home;

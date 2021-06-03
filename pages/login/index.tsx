@@ -19,6 +19,8 @@ import { createPost, fetchTodos } from "pages/api/queries";
 import { useRouter } from "next/router";
 import Alert from "components/Alert";
 import LoginForm from "components/LoginForms";
+import { getSession } from "next-auth/client";
+import { redirect } from "utils/functions";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -75,7 +77,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const Login = () => {
+const Login = ({ session }) => {
   const classes = useStyles();
   const [value, setValue] = useState(0);
   const theme = useTheme();
@@ -133,5 +135,16 @@ const Login = () => {
     </div>
   );
 };
+
+export async function getServerSideProps(context) {
+  const session: any = await getSession(context);
+
+  const props = { useLayout: false, session };
+  if (session) {
+    return redirect("/");
+  }
+
+  return { props: { ...props } };
+}
 
 export default Login;
