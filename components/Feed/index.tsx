@@ -22,7 +22,11 @@ export interface Feed {
   content: string;
   course: string;
   learningStyle: string;
-  createdBy: string;
+  createdBy: {
+    firstname: string;
+    lastname: string;
+    title: string;
+  };
   createdAt: string;
   courseCode: string;
   level: string;
@@ -94,7 +98,9 @@ const Feed = ({
                 {unit} unit
               </Typography>
             </Typography>
-            <Typography className={classes.author}>By {createdBy}</Typography>
+            <Typography className={classes.author}>
+              By {__.capitalize(`${createdBy.title} ${createdBy.lastname}`)}
+            </Typography>
             <Spacer size={0.5} />
             <Chip
               size="small"

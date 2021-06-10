@@ -170,11 +170,12 @@ function Course() {
                 <Tag>{data?.feed?.learningStyle}</Tag>
               </Box>
               <Box display="flex" alignItems="center" color="#ffffff" my={2}>
-                <Typography>Created by: </Typography>
+                <Typography>Created by: </Typography>{" "}
                 <Link href="#!">
                   <Typography className={classes.fontBold}>
-                    {" "}
-                    {_.capitalize(data?.feed?.createdBy)}
+                    {_.capitalize(
+                      `${data?.feed?.createdBy.title} ${data?.feed?.createdBy.firstname} ${data?.feed?.createdBy.lastname}`
+                    )}
                   </Typography>
                 </Link>
               </Box>
