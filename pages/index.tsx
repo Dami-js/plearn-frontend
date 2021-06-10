@@ -10,16 +10,19 @@ import {
   Typography,
 } from "@material-ui/core";
 import AuthGuard from "components/AuthGuard";
-import Feed from "components/Feed";
+import Feed, { FeaturedFeedSkeleton } from "components/Feed";
 import Jumbotron from "components/Jumbotron";
 import Navbar from "components/Navbar";
 import SearchBar from "components/SearchBar";
+import useProfile from "hooks/useProfile";
 import { NextPage, NextPageContext } from "next";
 import { getSession, useSession } from "next-auth/client";
 import { AppContext } from "next/app";
 import Head from "next/head";
 import Link from "next/link";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { useQuery } from "react-query";
+import { getFeeds, GetFeedsQuery } from "./api/queries";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -82,25 +85,20 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Featured = () => {
-  let arr: Array<number> = [];
-  for (let i: number = 0; i <= 8; i++) {
-    arr.push(i);
-  }
-  return (
-    <Grid container spacing={3}>
-      {arr.map((item) => (
-        <Grid xs={12} sm={6} md={3} key={item} item>
-          <Feed />
-        </Grid>
-      ))}
-    </Grid>
-  );
-};
-
-const Home: NextPage<any> = ({ ...props }) => {
+const Home: NextPage<any> = ({ session }) => {
   const classes = useStyles();
-  const [session] = useSession();
+  const [page, setPage] = useState<number>(1);
+  const profile = useProfile();
+
+  const fetchOptions: GetFeedsQuery = {
+    page,
+    q: profile?.data?.learningStyle,
+  };
+
+  const { isLoading, data, error, isFetching, refetch } = useQuery(
+    ["feeds", fetchOptions],
+    getFeeds
+  );
 
   return (
     <div>
@@ -110,15 +108,37 @@ const Home: NextPage<any> = ({ ...props }) => {
         <Container>
           <Box>
             <Box mb={2}>
-              <Typography variant="h4">New Courses</Typography>
+              <Typography variant="h4">Recommended Courses</Typography>
             </Box>
-            <Featured />
           </Box>
-          <Box mt={10}>
-            <Box mb={2}>
-              <Typography variant="h4">Popular Courses</Typography>
+          {(isLoading || profile?.isLoading) && <FeaturedFeedSkeleton />}
+          {error && (
+            <Box my={10} textAlign="center">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => refetch()}
+              >
+                Refresh
+              </Button>
             </Box>
-            <Featured />
+          )}
+
+          {(!isLoading || profile?.isLoading) && data && data?.docs.length > 0 && (
+            <Grid container spacing={3}>
+              {data.docs.map((feed, index) => (
+                <Grid xs={12} sm={6} md={3} key={index} item>
+                  <Feed {...feed} />
+                </Grid>
+              ))}
+            </Grid>
+          )}
+          <Box my={10} textAlign="center">
+            <Link href="/courses">
+              <Button variant="contained" color="primary">
+                View all courses
+              </Button>
+            </Link>
           </Box>
         </Container>
       </Box>

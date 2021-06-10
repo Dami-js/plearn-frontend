@@ -14,7 +14,7 @@ import {
 import axios from "axios";
 import Alert from "components/Alert";
 import { useFormik } from "formik";
-import { signin } from "next-auth/client";
+import { signIn, signin } from "next-auth/client";
 import { useRouter } from "next/router";
 import { registerUser } from "pages/api/queries";
 import { FormEvent, useState } from "react";
@@ -108,10 +108,6 @@ const RegistrationForm = ({ isStudent = false }: RegistrationFormForm) => {
   });
 
   const onSubmit = (values) => {
-    const loginValues = {
-      username: isStudent ? values.studentnumber : values.email,
-      password: values.password,
-    };
     mutate(values, {
       onError: (error: ResponseError, variables, context) => {
         const { response } = error;
@@ -119,7 +115,24 @@ const RegistrationForm = ({ isStudent = false }: RegistrationFormForm) => {
         console.log(response);
       },
       onSuccess: (data, variables, context) => {
-        router.push("/login?reg=success");
+        if (data) {
+          const loginValues = {
+            username: data.data.isStudent
+              ? data.data.studentNumber
+              : values.email,
+            password: values.password,
+          };
+          const callbackUrl = data.data.isStudent
+            ? `${NEXT_PUBLIC_URL}/post-register`
+            : `${NEXT_PUBLIC_URL}`;
+          console.log(data);
+          console.log(loginValues);
+          signIn("credentials", {
+            ...loginValues,
+            callbackUrl,
+          });
+          // router.push("/login?reg=success");
+        }
       },
     });
   };

@@ -17,25 +17,15 @@ const PostRegister = ({ session }) => {
       router.push("/");
     }
   }, []);
-  return <Typography>Loading...</Typography>;
+  return <Typography>Loading... Please wait</Typography>;
 };
 
 export async function getServerSideProps(context) {
   const session: any = await getSession(context);
 
-  const props = {};
+  const props = { useLayout: false, session };
 
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-      props: {},
-    };
-  }
-
-  return { props: { ...props, session } };
+  return { props: { ...props } };
 }
 
 export default PostRegister;

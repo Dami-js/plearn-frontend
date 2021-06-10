@@ -66,6 +66,16 @@ export async function getServerSideProps(context) {
     };
   }
 
+  if (session && !session.user.user.isStudent) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: { ...props },
+    };
+  }
+
   return { props: { ...props } };
 }
 

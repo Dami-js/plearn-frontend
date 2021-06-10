@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Container,
   createStyles,
   Grid,
@@ -8,13 +9,17 @@ import {
   Theme,
   Typography,
 } from "@material-ui/core";
-import Feed from "components/Feed";
+import Feed, { FeaturedFeedSkeleton } from "components/Feed";
 import Navbar from "components/Navbar";
 import SearchBar from "components/SearchBar";
+import useProfile from "hooks/useProfile";
 import { NextPage, NextPageContext } from "next";
 import { AppContext } from "next/app";
 import Head from "next/head";
-import { ReactNode } from "react";
+import { getFeeds, GetFeedsQuery } from "pages/api/queries";
+import { ReactNode, useState } from "react";
+import { useQuery } from "react-query";
+import * as __ from "lodash";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -74,56 +79,126 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: theme.spacing(2),
       marginBottom: theme.spacing(1),
     },
+    headerText: {
+      fontSize: theme.spacing(5),
+      color: theme.palette.grey[50],
+      fontWeight: 700,
+      [theme.breakpoints.up("md")]: {
+        fontSize: theme.spacing(10),
+      },
+    },
+    header: {
+      background:
+        "url(https://res.cloudinary.com/sewejed/image/upload/v1622705811/pexels-zen-chung-5537940_1_kym2rn.png)",
+      height: "250px",
+      width: "100%",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      paddingTop: theme.spacing(5),
+      marginTop: theme.spacing(-7),
+      marginBottom: theme.spacing(5),
+      [theme.breakpoints.up("md")]: {
+        height: "400px",
+      },
+    },
+    headerInner: {
+      display: "flex",
+      height: "100%",
+      alignItems: "center",
+    },
   })
 );
 
-const Featured = () => {
-  let arr: Array<number> = [];
-  for (let i: number = 0; i <= 7; i++) {
-    arr.push(i);
-  }
-  return (
-    <Grid container spacing={3}>
-      {arr.map((item) => (
-        <Grid xs={12} sm={6} md={3} key={item} item>
-          <Feed />
-        </Grid>
-      ))}
-    </Grid>
-  );
-};
-
 const Home: NextPage<any> = ({ ...props }) => {
   const classes = useStyles();
+  const [page, setPage] = useState<number>(1);
+  const [allFeedsPage, setAllFeedsPage] = useState<number>(1);
+  const profile = useProfile();
+
+  const fetchOptions: GetFeedsQuery = {
+    page,
+    q: profile?.data?.learningStyle,
+  };
+
+  const { isLoading, data, error, isFetching, refetch } = useQuery(
+    ["recommended-feeds", fetchOptions],
+    getFeeds
+  );
+
+  const {
+    isLoading: allIsLoading,
+    data: allData,
+    error: allError,
+    isFetching: allIsFetching,
+    refetch: allRefetch,
+  } = useQuery(["all-feeds", { page: allFeedsPage }], getFeeds);
+
   return (
     <div>
       {/* <Navbar /> */}
       <Box className={classes.main}>
+        <div className={classes.header}>
+          <div className={classes.headerInner}>
+            <Container>
+              <Typography className={classes.headerText}>Courses</Typography>
+            </Container>
+          </div>
+        </div>
         <Container>
-          <Box mb={4}>
-            <Box mb={2}>
-              <Typography variant="h4">Pragmatist</Typography>
+          {(isLoading || profile?.isLoading) && <FeaturedFeedSkeleton />}
+          {error && (
+            <Box my={10} textAlign="center">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => refetch()}
+              >
+                Refresh
+              </Button>
             </Box>
-            <Featured />
-          </Box>
-          <Box mb={4}>
-            <Box mb={2}>
-              <Typography variant="h4">Theorist</Typography>
+          )}
+          {profile?.data && profile?.data.learningStyle && (
+            <Box mb={4}>
+              <Box mb={2}>
+                <Typography variant="h4">Recommended Courses</Typography>
+              </Box>
+              {(!isLoading || profile?.isLoading) &&
+                data &&
+                data?.docs.length > 0 && (
+                  <Grid container spacing={3}>
+                    {data.docs.map((feed, index) => (
+                      <Grid xs={12} sm={6} md={3} key={index} item>
+                        <Feed {...feed} />
+                      </Grid>
+                    ))}
+                  </Grid>
+                )}
             </Box>
-            <Featured />
+          )}
+          <Box mb={2}>
+            <Typography variant="h4">Popular Courses</Typography>
           </Box>
-          <Box mb={4}>
-            <Box mb={2}>
-              <Typography variant="h4">Reflctor</Typography>
+          {allIsLoading && <FeaturedFeedSkeleton />}
+          {allError && (
+            <Box my={10} textAlign="center">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => allRefetch()}
+              >
+                Refresh
+              </Button>
             </Box>
-            <Featured />
-          </Box>
-          <Box mb={4}>
-            <Box mb={2}>
-              <Typography variant="h4">Activist</Typography>
-            </Box>
-            <Featured />
-          </Box>
+          )}
+          {!allIsLoading && allData && allData?.docs.length > 0 && (
+            <Grid container spacing={3}>
+              {allData.docs.map((feed, index) => (
+                <Grid xs={12} sm={6} md={3} key={index} item>
+                  <Feed {...feed} />
+                </Grid>
+              ))}
+            </Grid>
+          )}
         </Container>
       </Box>
     </div>

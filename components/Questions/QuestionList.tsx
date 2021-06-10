@@ -88,17 +88,10 @@ const QuestionList = ({ session }) => {
           </Typography>
         </Box>
         <Box textAlign="center" fontWeight="bold">
-          {data?.learningStyle &&
-            data.learningStyle.map((item, idx) => (
-              <Typography
-                variant="h4"
-                key={idx}
-                style={{ transform: "capitalize" }}
-              >
-                {" "}
-                {_.capitalize(item)}{" "}
-              </Typography>
-            ))}
+          <Typography variant="h4" style={{ transform: "capitalize" }}>
+            {" "}
+            {_.capitalize(data?.learningStyle)}{" "}
+          </Typography>
         </Box>
         <Box textAlign="center" py={5}>
           <Button

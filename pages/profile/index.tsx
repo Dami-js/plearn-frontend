@@ -98,7 +98,7 @@ const Profile = ({ session }) => {
     { retry: false }
   );
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
       <div className={classes.root}>
         <Box display="flex" alignItems="center" justifyContent="center">
@@ -114,7 +114,7 @@ const Profile = ({ session }) => {
     );
   }
 
-  if (error) {
+  if (error && !data) {
     return (
       <div className={classes.root}>
         <Box
@@ -141,28 +141,25 @@ const Profile = ({ session }) => {
               <Typography className={classes.titleBarText}>
                 My profile
               </Typography>
-              {data.learningStyle.length > 0 && (
+              {data?.learningStyle && (
                 <Box>
-                  <Typography>You are a</Typography>
+                  <Typography>You are a / an</Typography>
+                  <Typography className={classes.learningText}>
+                    {data?.learningStyle}
+                  </Typography>
                 </Box>
               )}
-              {data.learningStyle.length > 0 &&
-                data.learningStyle.map((item, idx) => (
-                  <Typography key={idx} className={classes.learningText}>
-                    {item}
-                  </Typography>
-                ))}
-              {/* <Box color="#ffffff">
+              <Box color="#ffffff">
                 {!data.isStudent && (
                   <Box component="span" ml={2}>
-                    <Link href="/course/add-new">
-                      <Button variant="text" color="inherit">
+                    <Link href="/courses/add-new">
+                      <Button variant="contained" color="primary">
                         Create new course
                       </Button>
                     </Link>
                   </Box>
                 )}
-              </Box> */}
+              </Box>
             </Box>
           </Container>
         </Box>
@@ -175,6 +172,7 @@ const Profile = ({ session }) => {
               <Box mb={3}>
                 <Typography className={classes.detailTitle}>Name</Typography>
                 <Typography className={classes.detailText}>
+                  {_.capitalize(`${data.level ?? data.title}`)}{" "}
                   {_.capitalize(`${data.firstname}`)}{" "}
                   {_.capitalize(`${data.lastname}`)}
                 </Typography>
@@ -185,36 +183,35 @@ const Profile = ({ session }) => {
                   {data.email}
                 </Typography>
               </Box>
-              <Box mb={3}>
+              {/* <Box mb={3}>
                 <Typography className={classes.detailTitle}>
                   Phone Number
                 </Typography>
                 <Typography className={classes.detailText}>
                   o8o6 943 2293
                 </Typography>
-              </Box>
-              <Box mb={3}>
-                <Typography className={classes.detailTitle}>
-                  {data.isStudent ? "Level" : "Title"}
-                </Typography>
-                <Typography className={classes.detailText}>
-                  {_.capitalize(`${data.level ?? data.title}`)}
-                </Typography>
-              </Box>
+              </Box> */}
               {data.isStudent && (
-                <Box mb={3}>
-                  <Typography className={classes.detailTitle}>
-                    Learning Style(s)
-                  </Typography>
-                  {data.learningStyle.length > 0 &&
-                    data.learningStyle.map((item, idx) => (
-                      <Typography key={idx} className={classes.detailText}>
-                        {item}
-                      </Typography>
-                    ))}
-                </Box>
+                <>
+                  <Box mb={3}>
+                    <Typography className={classes.detailTitle}>
+                      Level
+                    </Typography>
+                    <Typography className={classes.detailText}>
+                      {data.level}
+                    </Typography>
+                  </Box>
+                  <Box mb={3}>
+                    <Typography className={classes.detailTitle}>
+                      Learning Style(s)
+                    </Typography>
+                    <Typography className={classes.detailText}>
+                      {data?.learningStyle}
+                    </Typography>
+                  </Box>
+                </>
               )}
-              {!data.isStudent && (
+              {/* {!data.isStudent && (
                 <Box mb={3}>
                   <Typography className={classes.detailTitle}>
                     Courses created
@@ -226,7 +223,7 @@ const Profile = ({ session }) => {
                       </Typography>
                     ))}
                 </Box>
-              )}
+              )} */}
             </div>
           </div>
         </Container>

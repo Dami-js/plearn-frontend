@@ -14,6 +14,22 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import theme from "utils/theme";
 import "./app.css";
 import LayoutProvider from "contexts/Layout";
+import NProgress from "nprogress";
+import Router from "next/router";
+
+NProgress.configure({ showSpinner: true });
+
+const handleRouteChange = (url) => {
+  NProgress.start();
+};
+
+const handleRouteChangeComplete = (url) => {
+  NProgress.done();
+};
+
+Router.events.on("routeChangeStart", handleRouteChange);
+Router.events.on("routeChangeComplete", handleRouteChangeComplete);
+Router.events.on("routeChangeError", handleRouteChangeComplete);
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {

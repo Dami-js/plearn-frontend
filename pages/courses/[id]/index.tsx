@@ -21,6 +21,11 @@ import * as _ from "lodash";
 import Tag from "components/Tag";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import GetAppIcon from "@material-ui/icons/GetApp";
+import { useQuery } from "react-query";
+import { getFeed } from "pages/api/queries";
+import { Skeleton } from "@material-ui/lab";
+import { useState } from "react";
+import { NEXT_PUBLIC_API_URL } from "utils/constants";
 
 const white = "#ffffff";
 
@@ -80,180 +85,143 @@ export const useCourseStyles = makeStyles((theme: Theme) =>
   })
 );
 
+const CourseSkeleton = () => {
+  return (
+    <>
+      <Skeleton variant="rect" width="100%" height={400} />
+      <Container>
+        <Box my={2}>
+          <Skeleton variant="rect" width="100%" height={800} />
+        </Box>
+      </Container>
+    </>
+  );
+};
+
 function Course() {
   const classes = useCourseStyles();
   const { query } = useRouter();
   const title = _.capitalize(_.replace(`${query.id}`, /-/g, " "));
+  const [useQueryResponse, setUseQueryResponse] = useState();
+
+  const load = true;
+
+  const { isLoading, data, error, isFetching, refetch } = useQuery(
+    ["single-feed", { title: query.id }],
+    getFeed
+  );
+
+  if (error && !data) {
+    return (
+      <div className={classes.root}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          my={2}
+          flexGrow="1"
+          height="90vh"
+        >
+          <Button variant="contained" color="primary" onClick={() => refetch()}>
+            Refresh
+          </Button>
+        </Box>
+      </div>
+    );
+  }
+
+  if (isLoading && !data) {
+    return <CourseSkeleton />;
+  }
+
+  const makeDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const formatted = `${date.getDate()}/${
+      date.getMonth() + 1
+    }/${date.getFullYear()}`;
+    return formatted;
+  };
+
+  console.log(data);
+
   return (
     <>
-      <div className={classes.root}>
-        <div className={classes.topHeaderSection}>
-          <Container>
-            <Breadcrumbs aria-label="breadcrumb">
-              <Typography className={classes.breadcrumbItem}>
-                Courses
-              </Typography>
-              <Typography className={classes.breadcrumbItem}>
-                <strong>Mathematics</strong>
-              </Typography>
-            </Breadcrumbs>
-            <Box color="white" my={2}>
-              <Typography className={classes.courseTitle}>{title}</Typography>
-              <Typography className={classes.courseDesc}>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Nesciunt ullam similique tenetur! Nisi voluptate veritatis qui
-                dolorem.
-              </Typography>
-            </Box>
-            <Box>
-              <Tag>Pragmatist</Tag>
-            </Box>
-            <Box display="flex" alignItems="center" color="#ffffff" my={2}>
-              <Typography>Created by: </Typography>
-              <Link href="#!">
-                <Typography className={classes.fontBold}>
-                  {" "}
-                  Dr Olatunji
+      {data && !isLoading && (
+        <div className={classes.root}>
+          <div className={classes.topHeaderSection}>
+            <Container>
+              <Breadcrumbs aria-label="breadcrumb">
+                <Typography className={classes.breadcrumbItem}>
+                  Courses
                 </Typography>
-              </Link>
-            </Box>
-            <Box color="#ffffff">
-              <Typography>
-                Created on: <strong> 12/04/2021 </strong>
+                <Typography className={classes.breadcrumbItem}>
+                  <strong>{data?.feed?.course}</strong>
+                </Typography>
+              </Breadcrumbs>
+              <Box color="white" my={2}>
+                <Typography className={classes.courseTitle}>{title}</Typography>
+                {/* <Typography className={classes.courseDesc}>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Nesciunt ullam similique tenetur! Nisi voluptate veritatis qui
+                  dolorem.
+                </Typography> */}
+              </Box>
+              <Box>
+                <Tag>{data?.feed?.learningStyle}</Tag>
+              </Box>
+              <Box display="flex" alignItems="center" color="#ffffff" my={2}>
+                <Typography>Created by: </Typography>
+                <Link href="#!">
+                  <Typography className={classes.fontBold}>
+                    {" "}
+                    {_.capitalize(data?.feed?.createdBy)}
+                  </Typography>
+                </Link>
+              </Box>
+              <Box color="#ffffff">
+                <Typography>
+                  Created on:{" "}
+                  <strong> {makeDate(`${data?.feed?.createdAt}`)} </strong>
+                </Typography>
+              </Box>
+            </Container>
+          </div>
+          <Container>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: data?.feed?.content,
+              }}
+            />
+
+            <Box mb={4}>
+              <Typography className={classes.sectionTitle}>
+                Course materials
               </Typography>
+              <Box>
+                <Grid container>
+                  <Grid item xs={6} sm={3} md={4} lg={3}>
+                    <Paper variant="outlined" className={classes.matCont}>
+                      <Typography>{data?.feed?.material}</Typography>
+                      <Button
+                        component="a"
+                        href={`${NEXT_PUBLIC_API_URL}/upload/${data?.feed?.material}`}
+                        startIcon={<GetAppIcon />}
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        target="__blank"
+                        download
+                      >
+                        Download
+                      </Button>
+                    </Paper>
+                  </Grid>
+                </Grid>
+              </Box>
             </Box>
           </Container>
         </div>
-        <Container>
-          {/* what you will learn section */}
-          <Box className={classes.wylCont} my={4}>
-            <Paper variant="outlined">
-              <CardContent>
-                <Typography className={classes.sectionTitle}>
-                  What you will learn
-                </Typography>
-                <Box>
-                  <Typography className={classes.sectionContent}>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Debitis rem excepturi non culpa voluptatem vitae quaerat
-                    similique repellendus ratione veritatis iste nihil corrupti
-                    repudiandae facere dolores maiores, quia perferendis id
-                    magni neque velit qui corporis? Ipsa vel deleniti animi
-                    cumque.
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Paper>
-          </Box>
-          {/* requirement / pre-equsite */}
-          <Box className={classes.requirementCont} mb={2}>
-            <Typography className={classes.sectionTitle}>
-              Requirement
-            </Typography>
-            <List className={classes.sectionContent}>
-              <ListItem disableGutters>
-                <ChevronRightIcon />
-                Lorem ipsum dolor sit.
-              </ListItem>
-              <ListItem disableGutters>
-                {" "}
-                <ChevronRightIcon />
-                Lorem ipsum dolor sit amet.
-              </ListItem>
-              <ListItem disableGutters>
-                {" "}
-                <ChevronRightIcon />
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-              </ListItem>
-              <ListItem disableGutters>
-                {" "}
-                <ChevronRightIcon />
-                Lorem ipsum dolor sit.
-              </ListItem>
-              <ListItem disableGutters>
-                {" "}
-                <ChevronRightIcon />
-                Lorem ipsum dolor sit amet consectetur.
-              </ListItem>
-              <ListItem disableGutters>
-                {" "}
-                <ChevronRightIcon />
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-              </ListItem>
-              <ListItem disableGutters>
-                {" "}
-                <ChevronRightIcon />
-                Lorem ipsum dolor sit.
-              </ListItem>
-            </List>
-          </Box>
-          {/* Description section */}
-          <Box className={classes.descriptionCont} mb={2}>
-            <Box>
-              <Typography className={classes.sectionTitle}>
-                Description
-              </Typography>
-            </Box>
-            <Box className={classes.sectionContent}>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam
-                ipsa enim ratione mollitia id quod. Vel alias aperiam libero
-                rerum mollitia tempore atque, doloribus quae hic repellat
-                reiciendis molestiae minima.
-              </Typography>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam
-                ipsa enim ratione mollitia id quod. Vel alias aperiam libero
-                rerum mollitia tempore atque, doloribus quae hic repellat
-                reiciendis molestiae minima.
-              </Typography>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam
-                ipsa enim ratione mollitia id quod. Vel alias aperiam libero
-                rerum mollitia tempore atque, doloribus quae hic repellat
-                reiciendis molestiae minima.
-              </Typography>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam
-                ipsa enim ratione mollitia id quod. Vel alias aperiam libero
-                rerum mollitia tempore atque, doloribus quae hic repellat
-                reiciendis molestiae minima.
-              </Typography>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam
-                ipsa enim ratione mollitia id quod. Vel alias aperiam libero
-                rerum mollitia tempore atque, doloribus quae hic repellat
-                reiciendis molestiae minima.
-              </Typography>
-            </Box>
-          </Box>
-
-          <Box mb={4}>
-            <Typography className={classes.sectionTitle}>
-              Course materials
-            </Typography>
-            <Box>
-              <Grid container>
-                <Grid item xs={6} sm={3} md={4} lg={3}>
-                  <Paper variant="outlined" className={classes.matCont}>
-                    <Typography>
-                      rerum facilis est et mnis voluptas assumenda est, o
-                    </Typography>
-                    <Button
-                      startIcon={<GetAppIcon />}
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                    >
-                      Download
-                    </Button>
-                  </Paper>
-                </Grid>
-              </Grid>
-            </Box>
-          </Box>
-        </Container>
-      </div>
+      )}
     </>
   );
 }

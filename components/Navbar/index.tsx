@@ -70,8 +70,6 @@ const Navbar = ({ session }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const theme = useTheme();
-  // const [session] = useSession();
-  console.log(session);
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -100,11 +98,10 @@ const Navbar = ({ session }) => {
             <MobileNav />
           </SwipeableDrawer>
           <Box className={classes.navMenuItems}>
-            <Box width={theme.spacing(45)} mx={3}>
-              <SearchBar />
-            </Box>
+            {/* <SearchBar /> */}
+            <Box mx={3}></Box>
 
-            <Button color="inherit" size="small" onClick={handleClick}>
+            {/* <Button color="inherit" size="small" onClick={handleClick}>
               Categories
             </Button>
             <Dropdown
@@ -118,7 +115,7 @@ const Navbar = ({ session }) => {
               <MenuItem>Activist</MenuItem>
               <MenuItem>Theorist</MenuItem>
               <MenuItem>Reflector</MenuItem>
-            </Dropdown>
+            </Dropdown> */}
             <Box ml={2}>
               <Link href="/courses">
                 <Button variant="text" color="default" size="small">
@@ -126,13 +123,13 @@ const Navbar = ({ session }) => {
                 </Button>
               </Link>
             </Box>
-            <Box ml={2}>
+            {/* <Box ml={2}>
               <Link href="/#!">
                 <Button variant="text" color="default" size="small">
                   My Learning Style
                 </Button>
               </Link>
-            </Box>
+            </Box> */}
             <Box ml={2}>
               <Link href="/questionnaire">
                 <Button variant="text" color="primary" size="small">
