@@ -122,16 +122,14 @@ const RegistrationForm = ({ isStudent = false }: RegistrationFormForm) => {
               : values.email,
             password: values.password,
           };
-          const callbackUrl = data.data.isStudent
-            ? `${NEXT_PUBLIC_URL}/post-register`
-            : `${NEXT_PUBLIC_URL}`;
-          console.log(data);
-          console.log(loginValues);
-          signIn("credentials", {
-            ...loginValues,
-            callbackUrl,
-          });
-          // router.push("/login?reg=success");
+          if (data.data.isStudent) {
+            signIn("credentials", {
+              ...loginValues,
+              callbackUrl: `${NEXT_PUBLIC_URL}/post-register`,
+            });
+          } else {
+            router.push("/login?reg=success");
+          }
         }
       },
     });

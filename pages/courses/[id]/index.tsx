@@ -173,9 +173,10 @@ function Course() {
                 <Typography>Created by: </Typography>{" "}
                 <Link href="#!">
                   <Typography className={classes.fontBold}>
-                    {_.capitalize(
-                      `${data?.feed?.createdBy.title} ${data?.feed?.createdBy.firstname} ${data?.feed?.createdBy.lastname}`
-                    )}
+                    {" "}
+                    {_.capitalize(data?.feed?.createdBy.title)}{" "}
+                    {_.capitalize(data?.feed?.createdBy.firstname)}{" "}
+                    {_.capitalize(data?.feed?.createdBy.lastname)}
                   </Typography>
                 </Link>
               </Box>

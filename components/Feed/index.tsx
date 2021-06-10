@@ -99,7 +99,8 @@ const Feed = ({
               </Typography>
             </Typography>
             <Typography className={classes.author}>
-              By {__.capitalize(`${createdBy.title} ${createdBy.lastname}`)}
+              By {__.capitalize(createdBy.title)}{" "}
+              {__.capitalize(createdBy.lastname)}
             </Typography>
             <Spacer size={0.5} />
             <Chip
