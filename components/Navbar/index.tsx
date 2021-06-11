@@ -116,7 +116,7 @@ const Navbar = ({ session }) => {
               <MenuItem>Theorist</MenuItem>
               <MenuItem>Reflector</MenuItem>
             </Dropdown> */}
-            <Box ml={2}>
+            <Box ml={5}>
               <Link href="/courses">
                 <Button variant="text" color="default" size="small">
                   Courses
@@ -130,13 +130,24 @@ const Navbar = ({ session }) => {
                 </Button>
               </Link>
             </Box> */}
-            <Box ml={2}>
-              <Link href="/questionnaire">
-                <Button variant="text" color="primary" size="small">
-                  Take Test
-                </Button>
-              </Link>
-            </Box>
+            {session && session.user.user.isStudent && (
+              <Box ml={2}>
+                <Link href="/questionnaire">
+                  <Button variant="text" color="primary" size="small">
+                    Take Test
+                  </Button>
+                </Link>
+              </Box>
+            )}
+            {session && !session.user.user.isStudent && (
+              <Box ml={2}>
+                <Link href="/courses/add-new">
+                  <Button variant="outlined" color="primary" size="small">
+                    Create new course
+                  </Button>
+                </Link>
+              </Box>
+            )}
             <Box ml="auto" display="flex" alignItems="center">
               {session && <UserAccountDropdown />}
               {!session && (

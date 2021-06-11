@@ -54,7 +54,7 @@ const LoginForm = ({ isStudent = false }: LoginFormProps) => {
       ...values,
       callbackUrl: `${NEXT_PUBLIC_URL}`,
     });
-    console.log(values);
+    // console.log(values);
   };
   const { handleSubmit, handleChange, touched, errors, values, isSubmitting } =
     useFormik({

@@ -203,10 +203,9 @@ function Course() {
                 <Grid container>
                   <Grid item xs={6} sm={3} md={4} lg={3}>
                     <Paper variant="outlined" className={classes.matCont}>
-                      <Typography>{data?.feed?.material}</Typography>
                       <Button
                         component="a"
-                        href={`${NEXT_PUBLIC_API_URL}/upload/${data?.feed?.material}`}
+                        href={data?.feed?.material}
                         startIcon={<GetAppIcon />}
                         variant="contained"
                         color="primary"
@@ -214,7 +213,7 @@ function Course() {
                         target="__blank"
                         download
                       >
-                        Download
+                        Download Material
                       </Button>
                     </Paper>
                   </Grid>

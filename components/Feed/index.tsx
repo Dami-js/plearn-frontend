@@ -84,7 +84,7 @@ const Feed = ({
         <Card className={classes.root} variant="outlined">
           <CardMedia
             className={classes.media}
-            image={`${NEXT_PUBLIC_API_URL}/upload/${thumbnail}`}
+            image={thumbnail}
             title="Paella dish"
           />
           <CardContent>

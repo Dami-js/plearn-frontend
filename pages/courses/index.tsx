@@ -16,7 +16,7 @@ import useProfile from "hooks/useProfile";
 import { NextPage, NextPageContext } from "next";
 import { AppContext } from "next/app";
 import Head from "next/head";
-import { getFeeds, GetFeedsQuery } from "pages/api/queries";
+import { getFeeds, GetFeedsQuery, getRecommendedFeed } from "pages/api/queries";
 import { ReactNode, useState } from "react";
 import { useQuery } from "react-query";
 import * as __ from "lodash";
@@ -122,7 +122,7 @@ const Home: NextPage<any> = ({ ...props }) => {
 
   const { isLoading, data, error, isFetching, refetch } = useQuery(
     ["recommended-feeds", fetchOptions],
-    getFeeds
+    getRecommendedFeed
   );
 
   const {

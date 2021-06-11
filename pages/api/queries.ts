@@ -136,6 +136,22 @@ export interface GetFeedsQuery {
   page?: number;
 }
 
+export const getRecommendedFeed = async ({ queryKey }) => {
+  const [_key, { q, page = 1 }]: [string, GetFeedsQuery] = queryKey;
+  const url = `${NEXT_PUBLIC_API_URL}/feeds?q=${q}&page=${page}`;
+
+  try {
+    const response = await axios({
+      method: "GET",
+      headers: {},
+      url,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const getFeeds = async ({ queryKey }) => {
   const [_key, { q, page = 1, learningStyle }]: [string, GetFeedsQuery] =
     queryKey;
