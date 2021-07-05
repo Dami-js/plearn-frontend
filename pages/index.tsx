@@ -88,11 +88,11 @@ const useStyles = makeStyles((theme: Theme) =>
 const Home: NextPage<any> = ({ session }) => {
   const classes = useStyles();
   const [page, setPage] = useState<number>(1);
-  const profile = useProfile();
+  const [profileData, profileError] = useProfile();
 
   const fetchOptions: GetFeedsQuery = {
     page,
-    q: profile?.data?.learningStyle,
+    q: profileData?.data?.learningStyle,
   };
 
   const { isLoading, data, error, isFetching, refetch } = useQuery(
@@ -111,7 +111,7 @@ const Home: NextPage<any> = ({ session }) => {
               <Typography variant="h4">Recommended Courses</Typography>
             </Box>
           </Box>
-          {(isLoading || profile?.isLoading) && <FeaturedFeedSkeleton />}
+          {(isLoading || profileData?.isLoading) && <FeaturedFeedSkeleton />}
           {error && (
             <Box my={10} textAlign="center">
               <Button
@@ -124,15 +124,24 @@ const Home: NextPage<any> = ({ session }) => {
             </Box>
           )}
 
-          {(!isLoading || profile?.isLoading) && data && data?.docs.length > 0 && (
-            <Grid container spacing={3}>
-              {data.docs.map((feed, index) => (
-                <Grid xs={12} sm={6} md={3} key={index} item>
-                  <Feed {...feed} />
-                </Grid>
-              ))}
-            </Grid>
-          )}
+          {(!isLoading || profileData?.isLoading) &&
+            data &&
+            data?.docs.length > 0 && (
+              <Grid container spacing={3}>
+                {data.docs.map((feed, index) => (
+                  <Grid xs={12} sm={6} md={3} key={index} item>
+                    <Feed {...feed} />
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+          {(!isLoading || profileData?.isLoading) &&
+            data &&
+            data?.docs.length < 1 && (
+              <Box my={10} textAlign="center">
+                <Typography>No courses available yet</Typography>
+              </Box>
+            )}
           <Box my={10} textAlign="center">
             <Link href="/courses">
               <Button variant="contained" color="primary">

@@ -189,6 +189,13 @@ function Course() {
             </Container>
           </div>
           <Container>
+            <Box mt={5} width="300px" height="300px">
+              <img
+                src={data?.feed?.thumbnail.url}
+                alt=""
+                style={{ width: "100%" }}
+              />
+            </Box>
             <div
               dangerouslySetInnerHTML={{
                 __html: data?.feed?.content,
@@ -201,11 +208,11 @@ function Course() {
               </Typography>
               <Box>
                 <Grid container>
-                  <Grid item xs={6} sm={3} md={4} lg={3}>
+                  <Grid item xs={12} sm={3} md={4} lg={3}>
                     <Paper variant="outlined" className={classes.matCont}>
                       <Button
                         component="a"
-                        href={data?.feed?.material}
+                        href={data?.feed?.material.url}
                         startIcon={<GetAppIcon />}
                         variant="contained"
                         color="primary"

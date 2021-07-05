@@ -18,7 +18,10 @@ import { NEXT_PUBLIC_API_URL } from "utils/constants";
 export interface Feed {
   _id: string;
   title: string;
-  thumbnail: string;
+  thumbnail: {
+    url: string;
+    public_id: string;
+  };
   content: string;
   course: string;
   learningStyle: string;
@@ -31,7 +34,10 @@ export interface Feed {
   courseCode: string;
   level: string;
   unit: string;
-  material: string;
+  material: {
+    url: string;
+    public_id: string;
+  };
 }
 
 export const FeedSkeleton = () => {
@@ -84,7 +90,7 @@ const Feed = ({
         <Card className={classes.root} variant="outlined">
           <CardMedia
             className={classes.media}
-            image={thumbnail}
+            image={thumbnail.url}
             title="Paella dish"
           />
           <CardContent>

@@ -1,6 +1,11 @@
 import { useSession } from "next-auth/client";
 import { myProfile } from "pages/api/queries";
-import { QueryObserverResult, RefetchOptions, useQuery } from "react-query";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  useQuery,
+  UseQueryResult,
+} from "react-query";
 
 interface UseProfile {
   data: any;
@@ -11,23 +16,22 @@ interface UseProfile {
   ) => Promise<QueryObserverResult<any, unknown>>;
 }
 
-const useProfile = (): UseProfile | null => {
+const useProfile = (): [data: UseProfile | null, error: Error | null] => {
   const [session]: Array<any> = useSession();
 
-  if (!session) return null;
+  const error = new Error("Please login");
 
-  const { data, error, isLoading, refetch } = useQuery(
+  if (!session) {
+    return [null, error];
+  }
+
+  const data = useQuery(
     ["getProfile", { token: session?.user?.access_token }],
     myProfile,
     { retry: false }
   );
 
-  return {
-    data,
-    error,
-    isLoading,
-    refetch,
-  };
+  return [data, null];
 };
 
 export default useProfile;

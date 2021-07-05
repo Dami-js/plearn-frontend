@@ -134,7 +134,7 @@ const AddNewCourse = ({ session }) => {
       level,
       courseCode,
       courseUnit,
-      createdBy: session?.user?.user?._id,
+      token: session?.user?.access_token,
       content,
       thumbnail,
       material,
@@ -146,15 +146,16 @@ const AddNewCourse = ({ session }) => {
       }
     }
 
-    if (thumbnail?.size > 2000000) {
-      setError(`Thumbnail image size is greater than 2MB`);
+    if (thumbnail?.size > 10000000) {
+      setError(`Thumbnail image size is greater than 10MB`);
       return;
     }
 
-    if (material?.size > 2000000) {
-      setError(`Material image size is greater than 2MB`);
+    if (material?.size > 10000000) {
+      setError(`Material image size is greater than 10MB`);
       return;
     }
+    // console.log(session?.user?.access_token);
 
     mutate(values, {
       onError: (error: ResponseError, variables, context) => {
@@ -364,13 +365,20 @@ const AddNewCourse = ({ session }) => {
 
       <Dialog aria-labelledby="simple-dialog-title" open={openDialog}>
         <DialogTitle id="simple-dialog-title">
-          Course create successfully!
+          Course created successfully!
         </DialogTitle>
-        <Box m={5} display="flex" justifyContent="center">
+        <Box
+          mx={5}
+          mb={5}
+          mt={1}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+        >
           <Button color="primary" variant="contained" onClick={handleNewCourse}>
             Create new course
           </Button>
-          <Box mx={2} />
+          <Box my={0.5} />
           <Link href="/courses">
             <Button color="default" variant="contained">
               Cancel

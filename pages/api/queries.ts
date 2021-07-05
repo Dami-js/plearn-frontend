@@ -71,7 +71,6 @@ export const createCourse = async (values) => {
   data.append("courseCode", values.courseCode);
   data.append("unit", values.courseUnit);
   data.append("content", values.content);
-  data.append("createdBy", values.createdBy);
   data.append("thumbnail", values.thumbnail, values.thumbnail.name);
   data.append("material", values.material, values.material.name);
 
@@ -81,6 +80,7 @@ export const createCourse = async (values) => {
       url,
       data,
       headers: {
+        Authorization: `Bearer ${values.token}`,
         "Content-Type": "multipart/form-data",
       },
     });
@@ -188,3 +188,20 @@ export const getFeed = async ({ queryKey }) => {
     throw new Error(error);
   }
 };
+
+export async function deleteCourse(payload) {
+  const { token, id } = payload;
+  try {
+    const response = await axios({
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      url: `${NEXT_PUBLIC_API_URL}/feeds/${id}`,
+    });
+    return response.data.data;
+    // return payload;
+  } catch (error) {
+    throw new Error(error);
+  }
+}

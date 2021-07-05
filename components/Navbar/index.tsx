@@ -15,13 +15,14 @@ import {
 } from "@material-ui/core";
 import Dropdown from "components/Dropdown";
 import SearchBar from "components/SearchBar";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import MenuIcon from "@material-ui/icons/Menu";
 import MobileNav from "./MobileNav";
 import Link from "next/link";
 import UserAccountDropdown from "components/UserAccountDropdown";
 import Logo from "components/Logo";
 import { useSession } from "next-auth/client";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,21 +38,21 @@ const useStyles = makeStyles((theme: Theme) =>
     navMenuItems: {
       display: "none",
       width: "100%",
-      [theme.breakpoints.up("md")]: {
+      [theme.breakpoints.up("sm")]: {
         display: "flex",
         alignItems: "center",
       },
     },
     menuIconCont: {
       display: "block",
-      [theme.breakpoints.up("md")]: {
+      [theme.breakpoints.up("sm")]: {
         display: "none",
       },
     },
     menuIcon: {
       fontSize: theme.spacing(4),
       color: theme.palette.primary.main,
-      [theme.breakpoints.up("md")]: {
+      [theme.breakpoints.up("sm")]: {
         display: "none",
       },
     },
@@ -70,6 +71,11 @@ const Navbar = ({ session }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const theme = useTheme();
+  const router = useRouter();
+
+  useEffect(() => {
+    setOpenDrawer(false);
+  }, [router.pathname]);
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -95,7 +101,7 @@ const Navbar = ({ session }) => {
             onClose={() => setOpenDrawer(false)}
             onOpen={() => setOpenDrawer(true)}
           >
-            <MobileNav />
+            <MobileNav session={session} />
           </SwipeableDrawer>
           <Box className={classes.navMenuItems}>
             {/* <SearchBar /> */}
@@ -116,7 +122,7 @@ const Navbar = ({ session }) => {
               <MenuItem>Theorist</MenuItem>
               <MenuItem>Reflector</MenuItem>
             </Dropdown> */}
-            <Box ml={5}>
+            <Box ml="auto">
               <Link href="/courses">
                 <Button variant="text" color="default" size="small">
                   Courses
@@ -148,7 +154,7 @@ const Navbar = ({ session }) => {
                 </Link>
               </Box>
             )}
-            <Box ml="auto" display="flex" alignItems="center">
+            <Box ml={2} display="flex" alignItems="center">
               {session && <UserAccountDropdown />}
               {!session && (
                 <>

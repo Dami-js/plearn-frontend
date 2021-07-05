@@ -4,6 +4,9 @@ import {
   CircularProgress,
   Container,
   createStyles,
+  Dialog,
+  DialogTitle,
+  Grid,
   makeStyles,
   Theme,
   Typography,
@@ -15,10 +18,13 @@ import Link from "next/link";
 import CreateIcon from "@material-ui/icons/Create";
 import { getSession, useSession } from "next-auth/client";
 import * as _ from "lodash";
-import { useQuery } from "react-query";
-import { myProfile } from "pages/api/queries";
-import { useEffect } from "react";
+import { useMutation, useQuery } from "react-query";
+import { deleteCourse, myProfile } from "pages/api/queries";
+import { useEffect, useState } from "react";
 import { Skeleton } from "@material-ui/lab";
+import Feed from "components/Feed";
+import queryClient from "utils/queryClient";
+import { ResponseError } from "utils/types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,14 +43,14 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingBlock: theme.spacing(2),
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
-      height: "200px",
+      height: "340px",
+      display: "flex",
+      alignItems: "center",
+      flexDirection: "column",
+      justifyContent: "center",
       marginBottom: theme.spacing(4),
       [theme.breakpoints.up("lg")]: {
-        height: "300px",
-        display: "flex",
-        alignItems: "center",
-        flexDirection: "column",
-        justifyContent: "center",
+        height: "600px",
         marginBottom: theme.spacing(10),
       },
     },
@@ -59,44 +65,88 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 500,
       textTransform: "capitalize",
     },
+    detailBox: {},
     detailTitle: {
-      fontWeight: 700,
-      fontSize: theme.spacing(2.5),
-    },
-    detailText: {
       fontSize: theme.spacing(2),
     },
-    profilePictureCont: {
-      marginBottom: theme.spacing(3),
-      width: "30%",
+    detailText: {
+      fontWeight: 700,
+      textTransform: "uppercase",
+      fontSize: theme.spacing(2.5),
     },
     detailsCont: {
-      textAlign: "center",
-      width: "65%",
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+      gap: "2rem",
     },
     detailsSection: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      [theme.breakpoints.up("lg")]: {
-        flexDirection: "row",
-        alignItems: "unset",
-        width: "60%",
-        marginInline: "auto",
-      },
+      marginBottom: theme.spacing(10),
+    },
+    coursesContainer: {
+      marginTop: theme.spacing(10),
     },
   })
 );
 
 const Profile = ({ session }) => {
   const classes = useStyles();
+  const [deleteError, setDeleteError] = useState<any>();
+  const [feedToDelete, setFeedToDelete] = useState<any>(null);
   // const [session]: Array<any> = useSession();
+  const queryKey = ["getProfile", { token: session?.user?.access_token }];
 
   const { data, error, isLoading, refetch } = useQuery(
     ["getProfile", { token: session?.user?.access_token }],
     myProfile,
     { retry: false }
   );
+
+  const { mutate, isLoading: deleteCourseLoading } = useMutation(deleteCourse, {
+    mutationKey: "delete-course",
+  });
+
+  async function profileCahce() {
+    try {
+      const data = await queryClient.getQueryData(queryKey);
+      return [data, null];
+    } catch (error) {
+      console.log(error);
+      return [null, error];
+    }
+  }
+
+  const updater = (oldData, id) => {
+    const courses = [...oldData.coursesCreated];
+    const newCourses = courses.filter((course) => course._id !== id);
+    const newData = { ...oldData, coursesCreated: [...newCourses] };
+    console.log(newData);
+    return newData;
+  };
+
+  const handleDelete = async (id) => {
+    const [data, error] = await profileCahce();
+    const payload = {
+      token: session?.user?.access_token,
+      id,
+    };
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    mutate(payload, {
+      onError: (error: ResponseError, variables, context) => {
+        const { response } = error;
+        setDeleteError(response.data.message);
+        console.log(response);
+      },
+      onSuccess: (data, variables, context) => {
+        console.log(data);
+        queryClient.setQueryData(queryKey, (oldData) => updater(oldData, id));
+        setFeedToDelete(null);
+      },
+    });
+  };
 
   if (isLoading && !data) {
     return (
@@ -132,6 +182,7 @@ const Profile = ({ session }) => {
       </div>
     );
   }
+
   return (
     <>
       <div className={classes.root}>
@@ -165,35 +216,24 @@ const Profile = ({ session }) => {
         </Box>
         <Container>
           <div className={classes.detailsSection}>
-            <div className={classes.profilePictureCont}>
-              <ProfilePicture user={data} size={15} />
-            </div>
             <div className={classes.detailsCont}>
-              <Box mb={3}>
+              <Box className={classes.detailBox}>
                 <Typography className={classes.detailTitle}>Name</Typography>
                 <Typography className={classes.detailText}>
-                  {_.capitalize(`${data.level ?? data.title}`)}{" "}
+                  {_.capitalize(`${data.title ? data.title : ""}`)}{" "}
                   {_.capitalize(`${data.firstname}`)}{" "}
                   {_.capitalize(`${data.lastname}`)}
                 </Typography>
               </Box>
-              <Box mb={3}>
+              <Box className={classes.detailBox}>
                 <Typography className={classes.detailTitle}>Email</Typography>
                 <Typography className={classes.detailText}>
                   {data.email}
                 </Typography>
               </Box>
-              {/* <Box mb={3}>
-                <Typography className={classes.detailTitle}>
-                  Phone Number
-                </Typography>
-                <Typography className={classes.detailText}>
-                  o8o6 943 2293
-                </Typography>
-              </Box> */}
               {data.isStudent && (
                 <>
-                  <Box mb={3}>
+                  <Box className={classes.detailBox}>
                     <Typography className={classes.detailTitle}>
                       Level
                     </Typography>
@@ -201,9 +241,9 @@ const Profile = ({ session }) => {
                       {data.level}
                     </Typography>
                   </Box>
-                  <Box mb={3}>
+                  <Box className={classes.detailBox}>
                     <Typography className={classes.detailTitle}>
-                      Learning Style(s)
+                      Learning Style
                     </Typography>
                     <Typography className={classes.detailText}>
                       {data?.learningStyle}
@@ -211,23 +251,72 @@ const Profile = ({ session }) => {
                   </Box>
                 </>
               )}
-              {/* {!data.isStudent && (
-                <Box mb={3}>
-                  <Typography className={classes.detailTitle}>
-                    Courses created
-                  </Typography>
-                  {data.coursesCreated.length > 0 &&
-                    data.coursesCreated.map((item, idx) => (
-                      <Typography key={idx} className={classes.detailText}>
-                        {item.title}
-                      </Typography>
-                    ))}
-                </Box>
-              )} */}
+            </div>
+            <div className={classes.coursesContainer}>
+              {!data.isStudent && (
+                <>
+                  <Box mb={3}>
+                    <Typography
+                      style={{ fontSize: "1.5rem", fontWeight: "bold" }}
+                    >
+                      Courses created
+                    </Typography>
+                  </Box>
+                  {data.coursesCreated.length > 0 && (
+                    <Grid container spacing={3}>
+                      {data.coursesCreated.map((feed, index) => (
+                        <Grid xs={12} sm={6} md={3} key={index} item>
+                          <Feed {...feed} />
+                          <Box mt={2}>
+                            <Button
+                              variant="contained"
+                              color="secondary"
+                              onClick={() => setFeedToDelete(feed._id)}
+                            >
+                              Delete
+                            </Button>
+                          </Box>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  )}
+                  {data.coursesCreated.length < 1 && (
+                    <Box color="#818181">
+                      <Typography>No courses created</Typography>
+                    </Box>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </Container>
       </div>
+      <Dialog
+        aria-labelledby="simple-dialog-title"
+        open={Boolean(feedToDelete)}
+      >
+        <DialogTitle id="simple-dialog-title">
+          Are you want to delete?
+        </DialogTitle>
+        <Box mx={5} mb={5} mt={1} display="flex" justifyContent="center">
+          <Button
+            color="secondary"
+            variant="contained"
+            onClick={() => handleDelete(feedToDelete)}
+            disabled={deleteCourseLoading}
+          >
+            {deleteCourseLoading ? "Please wait..." : "Delete"}
+          </Button>
+          <Box mx={1} />
+          <Button
+            color="default"
+            variant="contained"
+            onClick={() => setFeedToDelete(null)}
+          >
+            Cancel
+          </Button>
+        </Box>
+      </Dialog>
     </>
   );
 };

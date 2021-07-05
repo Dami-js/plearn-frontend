@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const MobileNav = () => {
+const MobileNav = ({session}) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -49,27 +49,57 @@ const MobileNav = () => {
     <Box className={classes.mobileNavContent}>
       <Box mb={3} display="flex" alignItems="center" width="100%">
         <Logo />
-        <Box ml="auto">
-          <UserAccountDropdown />
-        </Box>
+        {session && (
+          <Box ml="auto">
+            <UserAccountDropdown />
+          </Box>
+          )}
       </Box>
-      <Box width="100%" mb={2}>
-        <SearchBar />
-      </Box>
-      <CategoriesDropdown />
 
-      <Spacer size={1} />
-      <Box display="grid" gridGap={10} flexDirection="column" width="100%">
-        <Link href="/login">
-          <Button variant="outlined" color="primary" size="large" fullWidth>
-            Login
+      <Box my={1}>
+        <Link href="/courses">
+          <Button variant="text" color="default" size="small">
+            Courses
           </Button>
         </Link>
-
-        <Button variant="contained" color="primary" size="large" fullWidth>
-          Sign Up
-        </Button>
       </Box>
+
+      {session && session.user.user.isStudent && (
+        <Box my={1}>
+          <Link href="/questionnaire">
+            <Button variant="text" color="primary" size="small">
+              Take Test
+            </Button>
+          </Link>
+        </Box>
+      )}
+
+      {session && !session.user.user.isStudent && (
+        <Box my={1} width="100%">
+          <Link href="/courses/add-new">
+            <Button variant="outlined" color="primary" fullWidth>
+              Create new course
+            </Button>
+          </Link>
+        </Box>
+      )}
+
+      {!session && (
+        <>
+        <Spacer size={1} />
+        <Box display="grid" gridGap={10} flexDirection="column" width="100%">
+          <Link href="/login">
+            <Button variant="outlined" color="primary" size="large" fullWidth>
+              Login
+            </Button>
+          </Link>
+
+          <Button variant="contained" color="primary" size="large" fullWidth>
+            Sign Up
+          </Button>
+        </Box>
+        </>
+        )}
     </Box>
   );
 };

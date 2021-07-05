@@ -7,6 +7,7 @@ import {
   Box,
   Button,
 } from "@material-ui/core";
+import Link from "next/link";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -96,14 +97,16 @@ const Jumbotron = () => {
               just for you. To begin this journey, click the button below
             </Typography>
             <Box display={{ xs: "grid", sm: "block" }}>
+              <Link href="/questionnaire">
               <Button
                 variant="contained"
                 color="primary"
                 size="large"
                 style={{ textTransform: "capitalize" }}
-              >
+                >
                 Get Started
               </Button>
+                </Link>
             </Box>
           </Box>
         </Container>

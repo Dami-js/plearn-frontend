@@ -83,7 +83,7 @@ const QuestionList = ({ session }) => {
       <MuiModal open={open} title="Congratulations!" handleClose={handleClose}>
         <Box textAlign="center" p={5}>
           <Typography variant="h5">
-            Thank you for your time. You are a / an
+            Thank you for your response. You are a / an
           </Typography>
         </Box>
         <Box textAlign="center" fontWeight="bold">
