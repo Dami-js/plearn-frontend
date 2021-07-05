@@ -119,7 +119,7 @@ const Login = ({ session }) => {
                 value={value}
                 onChange={handleChange}
               >
-                <Tab className={classes.tab} label="Lecturer" />
+                <Tab className={classes.tab} label="Tutor" />
                 <Tab className={classes.tab} label="Student" />
               </Tabs>
             </AppBar>
