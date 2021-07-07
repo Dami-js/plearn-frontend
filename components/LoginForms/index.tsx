@@ -11,6 +11,7 @@ import { FormikProps, useFormik } from "formik";
 import * as yup from "yup";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { NEXTAUTH_URL, NEXT_PUBLIC_URL } from "utils/constants";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,11 +49,17 @@ const initialValues: LoginFormValues = {
 
 const LoginForm = ({ isStudent = false }: LoginFormProps) => {
   const classes = useStyles();
+  const router = useRouter();
+
+  const callbackUrl =
+    router.query.dest && router.query.dest == "questionnaire"
+      ? `${NEXT_PUBLIC_URL}/questionnaire`
+      : `${NEXT_PUBLIC_URL}`;
 
   const onSubmit = (values: LoginFormValues) => {
     signIn("credentials", {
       ...values,
-      callbackUrl: `${NEXT_PUBLIC_URL}`,
+      callbackUrl,
     });
     // console.log(values);
   };

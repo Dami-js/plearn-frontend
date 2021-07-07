@@ -13,6 +13,7 @@ import StepThree from "./StepThree";
 import StepTwo from "./StepTwo";
 import * as _ from "lodash";
 import { useRouter } from "next/router";
+import { getDescription } from "components/LearningStyleDescription";
 
 type NavKey = "next" | "prev";
 
@@ -91,6 +92,7 @@ const QuestionList = ({ session }) => {
             {" "}
             {_.capitalize(data?.learningStyle)}{" "}
           </Typography>
+          <Typography>{getDescription(data?.learningStyle ?? "")}</Typography>
         </Box>
         <Box textAlign="center" py={5}>
           <Button

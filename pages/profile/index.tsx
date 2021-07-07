@@ -25,6 +25,8 @@ import { Skeleton } from "@material-ui/lab";
 import Feed from "components/Feed";
 import queryClient from "utils/queryClient";
 import { ResponseError } from "utils/types";
+import { isVowel } from "utils/functions";
+import LearningStyleDescription from "components/LearningStyleDescription";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,6 +37,12 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       [theme.breakpoints.up("lg")]: {
         paddingTop: theme.spacing(8),
+      },
+    },
+    description: {
+      [theme.breakpoints.up("md")]: {
+        width: "60%",
+        margin: "auto",
       },
     },
     titleBar: {
@@ -193,12 +201,21 @@ const Profile = ({ session }) => {
                 My profile
               </Typography>
               {data?.learningStyle && (
-                <Box>
-                  <Typography>You are a / an</Typography>
-                  <Typography className={classes.learningText}>
-                    {data?.learningStyle}
-                  </Typography>
-                </Box>
+                <>
+                  <Box>
+                    <Typography>
+                      You are {isVowel(data?.learningStyle) ? "an" : "a"}
+                    </Typography>
+                    <Typography className={classes.learningText}>
+                      {data?.learningStyle}
+                    </Typography>
+                  </Box>
+                  <Box my={4} className={classes.description}>
+                    <LearningStyleDescription
+                      learningStyle={data?.learningStyle}
+                    />
+                  </Box>
+                </>
               )}
               <Box color="#ffffff">
                 {!data.isStudent && (
